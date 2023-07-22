@@ -6,8 +6,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { MessageSquare } from 'lucide-react';
-import type { ChatCompletionRequestMessage } from 'openai';
+import { VideoIcon } from 'lucide-react';
 
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
@@ -15,17 +14,14 @@ import { Button } from '@/components/ui/button';
 import { Heading } from '@/components/heading';
 import { Empty } from '@/components/empty';
 import { Loader } from '@/components/loader';
-import { UserAvatar } from '@/components/user-avatar';
-import { BotAvatar } from '@/components/bot-avatar';
 import { useProModal } from '@/hooks/use-pro-modal';
-import { cn } from '@/lib/utils';
 
 import { formSchema } from './constants';
 
-export default function ConversationPage() {
+export default function VideoPage() {
   const proModal = useProModal();
   const router = useRouter();
-  const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
+  const [video, setVideo] = useState<string>();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -38,18 +34,11 @@ export default function ConversationPage() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const userMessage: ChatCompletionRequestMessage = {
-        role: 'user',
-        content: values.prompt,
-      };
+      setVideo(undefined);
 
-      const newMessages = [...messages, userMessage];
+      const response = await axios.post('/api/video', values);
 
-      const response = await axios.post('/api/conversation', {
-        messages: newMessages,
-      });
-
-      setMessages((current) => [...current, userMessage, response.data]);
+      setVideo(response.data[0]);
 
       form.reset();
     } catch (error: any) {
@@ -64,11 +53,11 @@ export default function ConversationPage() {
   return (
     <div>
       <Heading
-        title="Conversation"
-        description="Our most advanced conversation model."
-        icon={MessageSquare}
-        iconColor="text-violet-500"
-        bgColor="bg-violet-500/10"
+        title="Video Generation"
+        description="Turn your prompt into video."
+        icon={VideoIcon}
+        iconColor="text-orange-700"
+        bgColor="bg-orange-700/10"
       />
       <div className="px-4 lg:px-8">
         <div>
@@ -85,7 +74,7 @@ export default function ConversationPage() {
                       <Input
                         className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
                         disabled={isLoading}
-                        placeholder="How do I calculate the radius of a circle?"
+                        placeholder="Clown fish swimming around a coral reef."
                         {...field}
                       />
                     </FormControl>
@@ -107,25 +96,15 @@ export default function ConversationPage() {
               <Loader />
             </div>
           )}
-          {messages.length === 0 && !isLoading && (
-            <Empty label="No conversation started" />
+          {!video && !isLoading && <Empty label="No video generated." />}
+          {video && (
+            <video
+              className="w-full aspect-video mt-8 rounded-lg border bg-black"
+              controls
+            >
+              <source src={video} />
+            </video>
           )}
-          <div className="flex flex-col-reverse gap-y-4">
-            {messages.map((message) => (
-              <div
-                key={message.content}
-                className={cn(
-                  'p-8 w-full flex items-start gap-x-8 rounded-lg',
-                  message.role === 'user'
-                    ? 'bg-white border border-black/10'
-                    : 'bg-muted',
-                )}
-              >
-                {message.role === 'user' ? <UserAvatar /> : <BotAvatar />}
-                <p className="text-sm">{message.content}</p>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
     </div>
