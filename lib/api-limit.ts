@@ -17,10 +17,17 @@ export async function increaseApiLimit() {
   });
 
   if (userApiLimit) {
-    await prismadb.userApiLimit.update({
-      where: { userId: userId },
-      data: { count: userApiLimit.count + 1 },
-    });
+    if (userApiLimit.count === MAX_FREE_COUNTS) {
+      await prismadb.userApiLimit.update({
+        where: { userId: userId },
+        data: { count: MAX_FREE_COUNTS },
+      });
+    } else {
+      await prismadb.userApiLimit.update({
+        where: { userId: userId },
+        data: { count: userApiLimit.count + 1 },
+      });
+    }
   } else {
     await prismadb.userApiLimit.create({
       data: { userId: userId, count: 1 },
