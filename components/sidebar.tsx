@@ -65,9 +65,10 @@ const routes = [
 
 interface SidebarProps {
   apiLimitCount: number;
+  isPro: boolean;
 }
 
-export function Sidebar({ apiLimitCount = 0 }: SidebarProps) {
+export function Sidebar({ apiLimitCount = 0, isPro = false }: SidebarProps) {
   const pathname = usePathname();
 
   return (
@@ -79,9 +80,10 @@ export function Sidebar({ apiLimitCount = 0 }: SidebarProps) {
         >
           <div className="relative w-8 h-8 mr-4">
             <Image
-              fill
-              alt="Logo"
               src="/logo.png"
+              alt="Logo"
+              fill
+              sizes="100vw 100vh"
             />
           </div>
           <h1 className={cn('text-2xl font-bold', montserrat.className)}>Genius</h1>
@@ -104,7 +106,10 @@ export function Sidebar({ apiLimitCount = 0 }: SidebarProps) {
           ))}
         </div>
       </div>
-      <FreeCounter apiLimitCount={apiLimitCount} />
+      <FreeCounter
+        apiLimitCount={apiLimitCount}
+        isPro={isPro}
+      />
     </div>
   );
 }
