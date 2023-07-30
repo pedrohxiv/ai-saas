@@ -105,7 +105,3 @@ yarn dev
 ```
 
 6. O projeto estará disponível em `http://localhost:3000`.
-
-## Contribuindo
-
-Contribuições são bem-vindas! Se você encontrar problemas ou tiver sugestões para melhorias, sinta-se à vontade para abrir um "issue" neste repositório. Você também pode enviar "pull requests" com suas contribuições.
