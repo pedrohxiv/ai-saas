@@ -50,6 +50,7 @@ A seguir estão as principais dependências utilizadas no desenvolvimento do pro
 - `eslint-config-next` v13.4.10
 - `openai` v3.3.0
 - `postcss` v8.4.26
+- `prisma`: v5.1.1
 - `react` v18.2.0
 - `react-dom` v18.2.0
 - `react-hook-form` v7.45.2
